@@ -213,7 +213,9 @@ public class SSTable implements Closeable {
         );
     }
 
-    private static void writeValueWithSize(ByteBuffer value, WritableByteChannel channel, ByteBuffer tmp) throws IOException {
+    private static void writeValueWithSize(ByteBuffer value,
+                                           WritableByteChannel channel,
+                                           ByteBuffer tmp) throws IOException {
         writeInt(value.remaining(), channel, tmp);
         channel.write(tmp);
         channel.write(value);

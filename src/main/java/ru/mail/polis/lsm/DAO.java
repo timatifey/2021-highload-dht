@@ -13,7 +13,12 @@ import java.util.Iterator;
 public interface DAO extends Closeable {
     Iterator<Record> range(@Nullable ByteBuffer fromKey, @Nullable ByteBuffer toKey);
 
-    void upsert(Record record) throws UncheckedIOException;
+    /**
+     * Update/insert
+     * @param record new record for updating/inserting
+     * @throws UncheckedIOException
+     */
+    void upsert(Record record);
 
     void closeAndCompact() throws IOException;
 

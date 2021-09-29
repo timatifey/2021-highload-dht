@@ -8,7 +8,6 @@ import one.nio.http.Path;
 import one.nio.http.Request;
 import one.nio.http.Response;
 import one.nio.server.AcceptorConfig;
-
 import ru.mail.polis.lsm.DAO;
 import ru.mail.polis.lsm.Record;
 import ru.mail.polis.service.Service;
@@ -21,7 +20,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class BasicService extends HttpServer implements Service {
 
-    private final static String V0 = "/v0";
+    private static final String V0 = "/v0";
     private final DAO dao;
 
     public BasicService(
