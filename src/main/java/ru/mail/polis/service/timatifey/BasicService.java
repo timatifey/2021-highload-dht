@@ -1,11 +1,6 @@
 package ru.mail.polis.service.timatifey;
 
-import one.nio.http.HttpServer;
-import one.nio.http.HttpServerConfig;
-import one.nio.http.Param;
-import one.nio.http.Path;
-import one.nio.http.Request;
-import one.nio.http.Response;
+import one.nio.http.*;
 import one.nio.server.AcceptorConfig;
 
 import ru.mail.polis.lsm.DAO;
@@ -19,6 +14,7 @@ import java.util.Iterator;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class BasicService extends HttpServer implements Service {
+
     private final static String V0 = "/v0";
     private final DAO dao;
 
@@ -29,13 +25,19 @@ public class BasicService extends HttpServer implements Service {
         this.dao = dao;
     }
 
-    private static HttpServerConfig from(int port) {
+    private static HttpServerConfig from(final int port) {
         final HttpServerConfig config = new HttpServerConfig();
         final AcceptorConfig acceptor = new AcceptorConfig();
         acceptor.port = port;
         acceptor.reusePort = true;
         config.acceptors = new AcceptorConfig[]{acceptor};
         return config;
+    }
+
+    @Override
+    public void handleDefault(Request request, HttpSession session) throws IOException {
+        Response response = new Response(Response.BAD_REQUEST, Response.EMPTY);
+        session.sendResponse(response);
     }
 
     @Path(V0 + "/status")
@@ -64,17 +66,29 @@ public class BasicService extends HttpServer implements Service {
         }
     }
 
-    private Response delete(String id) {
+    private Response get(final String id) {
         final ByteBuffer key = ByteBuffer.wrap(id.getBytes(UTF_8));
-        dao.upsert(Record.tombstone(key));
-        return new Response(Response.ACCEPTED);
+        final Iterator<Record> range = dao.range(key, DAO.nextKey(key));
+        if (range.hasNext()) {
+            final Record first = range.next();
+            final ByteBuffer value = first.getValue();
+            return new Response(Response.OK, extractBytes(value));
+        } else {
+            return new Response(Response.NOT_FOUND, Response.EMPTY);
+        }
     }
 
     private Response put(String id, byte[] body) {
         final ByteBuffer key = ByteBuffer.wrap(id.getBytes(UTF_8));
         final ByteBuffer value = ByteBuffer.wrap(body);
         dao.upsert(Record.of(key, value));
-        return new Response(Response.CREATED);
+        return new Response(Response.CREATED, Response.EMPTY);
+    }
+
+    private Response delete(String id) {
+        final ByteBuffer key = ByteBuffer.wrap(id.getBytes(UTF_8));
+        dao.upsert(Record.tombstone(key));
+        return new Response(Response.ACCEPTED, Response.EMPTY);
     }
 
     private static byte[] extractBytes(final ByteBuffer byteBuffer) {
@@ -83,14 +97,4 @@ public class BasicService extends HttpServer implements Service {
         return result;
     }
 
-    private Response get(String id) {
-        final ByteBuffer key = ByteBuffer.wrap(id.getBytes(UTF_8));
-        final Iterator<Record> range = dao.range(key, null);
-        if (range.hasNext()) {
-            final Record first = range.next();
-            return new Response(Response.OK, extractBytes(first.getKey()));
-        } else {
-            return new Response(Response.NOT_FOUND);
-        }
-    }
 }
