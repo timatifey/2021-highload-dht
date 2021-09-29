@@ -1,6 +1,12 @@
 package ru.mail.polis.service.timatifey;
 
-import one.nio.http.*;
+import one.nio.http.HttpServer;
+import one.nio.http.HttpServerConfig;
+import one.nio.http.HttpSession;
+import one.nio.http.Param;
+import one.nio.http.Path;
+import one.nio.http.Request;
+import one.nio.http.Response;
 import one.nio.server.AcceptorConfig;
 
 import ru.mail.polis.lsm.DAO;
@@ -78,14 +84,14 @@ public class BasicService extends HttpServer implements Service {
         }
     }
 
-    private Response put(String id, byte[] body) {
+    private Response put(final String id, byte[] body) {
         final ByteBuffer key = ByteBuffer.wrap(id.getBytes(UTF_8));
         final ByteBuffer value = ByteBuffer.wrap(body);
         dao.upsert(Record.of(key, value));
         return new Response(Response.CREATED, Response.EMPTY);
     }
 
-    private Response delete(String id) {
+    private Response delete(final String id) {
         final ByteBuffer key = ByteBuffer.wrap(id.getBytes(UTF_8));
         dao.upsert(Record.tombstone(key));
         return new Response(Response.ACCEPTED, Response.EMPTY);
