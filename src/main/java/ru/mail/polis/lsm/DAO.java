@@ -14,7 +14,7 @@ public interface DAO extends Closeable {
     Iterator<Record> range(@Nullable ByteBuffer fromKey, @Nullable ByteBuffer toKey);
 
     /**
-     * Update/insert
+     * Update/insert.
      *
      * @param record new record for updating/inserting
      * @throws UncheckedIOException can throw UncheckedIOException
