@@ -5,8 +5,8 @@ import ru.mail.polis.lsm.Record;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class FilterTombstonesIterator implements Iterator<Record> {
-    PeekingIterator delegate;
+public final class FilterTombstonesIterator implements Iterator<Record> {
+    private final PeekingIterator delegate;
 
     public FilterTombstonesIterator(Iterator<Record> iterator) {
         this.delegate = new PeekingIterator(iterator);
