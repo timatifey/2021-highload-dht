@@ -15,8 +15,9 @@ public interface DAO extends Closeable {
 
     /**
      * Update/insert
+     *
      * @param record new record for updating/inserting
-     * @throws UncheckedIOException
+     * @throws UncheckedIOException can throw UncheckedIOException
      */
     void upsert(Record record);
 
