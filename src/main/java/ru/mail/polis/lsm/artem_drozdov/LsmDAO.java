@@ -144,6 +144,7 @@ public class LsmDAO implements DAO {
         } catch (InterruptedException e) {
             flushService.shutdownNow();
             LOG.error(e.getMessage());
+            Thread.currentThread().interrupt();
         }
     }
 

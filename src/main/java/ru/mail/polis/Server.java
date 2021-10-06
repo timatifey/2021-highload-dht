@@ -63,18 +63,24 @@ public final class Server {
                             PORT,
                             dao);
             storage.start();
-            Runtime.getRuntime().addShutdownHook(
-                    new Thread(() -> {
-                        LOG.info("Handle shutdown hook");
-                        storage.stop();
-                        try {
-                            dao.close();
-                        } catch (IOException e) {
-                            throw new RuntimeException("Can't close dao", e);
-                        }
-                    }));
+            addShutdownHook(storage, dao);
+
         } catch (IOException e) {
             LOG.error(e.getMessage());
         }
+    }
+
+    private static void addShutdownHook(Service storage, DAO dao) {
+        Runtime.getRuntime().addShutdownHook(
+                new Thread(() -> {
+                    LOG.info("Handle shutdown hook");
+                    storage.stop();
+                    try {
+                        dao.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException("Can't close dao", e);
+                    }
+                })
+        );
     }
 }
