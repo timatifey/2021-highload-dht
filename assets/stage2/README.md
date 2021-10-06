@@ -360,8 +360,8 @@ Transfer/sec:    707.76KB
 
 | Тип запроса | cpu | alloc | lock |
 | --- | --- | --- | --- |
-| PUT | [ссылка]() | [ссылка]() | [ссылка]() |
-| GET | [ссылка]() | [ссылка]() | [ссылка]() |
+| PUT | [ссылка](https://htmlpreview.github.io/?https://github.com/timatifey/2021-highload-dht/blob/concurrency/assets/stage2/put/put-cpu.html) | [ссылка](https://htmlpreview.github.io/?https://github.com/timatifey/2021-highload-dht/blob/concurrency/assets/stage2/put/put-alloc.html) | [ссылка](https://htmlpreview.github.io/?https://github.com/timatifey/2021-highload-dht/blob/concurrency/assets/stage2/put/put-lock.html) |
+| GET | [ссылка](https://htmlpreview.github.io/?https://github.com/timatifey/2021-highload-dht/blob/concurrency/assets/stage2/get/get-cpu.html) | [ссылка](https://htmlpreview.github.io/?https://github.com/timatifey/2021-highload-dht/blob/concurrency/assets/stage2/get/get-alloc.html) | [ссылка](https://htmlpreview.github.io/?https://github.com/timatifey/2021-highload-dht/blob/concurrency/assets/stage2/get/get-lock.html) |
 
 #### Выводы
 + нужная производительность не была достигнута - задание не выполнено... 
