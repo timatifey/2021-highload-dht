@@ -65,7 +65,7 @@ public final class Server {
             storage.start();
             addShutdownHook(storage, dao);
         } catch (IOException e) {
-            LOG.error(e.getMessage());
+            LOG.error("Can't start the server", e);
         }
     }
 
@@ -76,7 +76,7 @@ public final class Server {
                     try {
                         dao.close();
                     } catch (IOException e) {
-                        throw new RuntimeException("Can't close dao", e);
+                        LOG.error("Can't close dao", e);
                     }
                 }));
     }
