@@ -28,7 +28,6 @@ public class LsmDAO implements DAO {
 
     private static final Logger LOG = LoggerFactory.getLogger(LsmDAO.class);
 
-    //private final AwaitingExecutorService compactService = new AwaitingExecutorService();
     private final AwaitingExecutorService flushService = new AwaitingExecutorService();
 
     private volatile Storage storage;
@@ -80,8 +79,6 @@ public class LsmDAO implements DAO {
         synchronized (this) {
             LOG.info("Await flush task completing");
             flushService.awaitTaskComplete();
-            //compactService.awaitTaskComplete();
-            //compactService.execute(this::performCompact);
             performCompact();
         }
     }
@@ -97,9 +94,6 @@ public class LsmDAO implements DAO {
 
             flushService.awaitTaskComplete();
             flushService.shutdown();
-
-            //compactService.awaitTaskComplete();
-            //compactService.shutdown();
 
             storage = storage.prepareBeforeFlush();
             flush(storage);
@@ -119,10 +113,6 @@ public class LsmDAO implements DAO {
                 SSTable flushedTable = flush(storage);
                 storage = storage.afterFlush(flushedTable);
                 LOG.info("Flush ended");
-                //if (needCompact()) {
-                //compactService.awaitTaskComplete();
-                //compactService.execute(this::performCompact);
-                //}
             } catch (IOException e) {
                 LOG.error("Fail to flush", e);
             }
