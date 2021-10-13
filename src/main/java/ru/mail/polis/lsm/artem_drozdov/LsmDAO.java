@@ -114,19 +114,17 @@ public class LsmDAO implements DAO {
         memoryConsumption.getAndSet(newMemoryConsumption);
         storage = storage.prepareBeforeFlush();
         flushService.execute(() -> {
-            synchronized (LsmDAO.this) {
-                try {
-                    LOG.info("Flush started");
-                    SSTable flushedTable = flush(storage);
-                    storage = storage.afterFlush(flushedTable);
-                    LOG.info("Flush ended");
+            try {
+                LOG.info("Flush started");
+                SSTable flushedTable = flush(storage);
+                storage = storage.afterFlush(flushedTable);
+                LOG.info("Flush ended");
 //                    if (needCompact()) {
 //                        compactService.awaitTaskComplete();
 //                        compactService.execute(this::performCompact);
 //                    }
-                } catch (IOException e) {
-                    LOG.error("Fail to flush", e);
-                }
+            } catch (IOException e) {
+                LOG.error("Fail to flush", e);
             }
         });
     }

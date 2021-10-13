@@ -13,14 +13,14 @@ public final class Storage {
 
     private static final NavigableMap<ByteBuffer, Record> EMPTY_STORAGE = newStorage();
 
-    final NavigableMap<ByteBuffer, Record> storageToFlush;
-    final NavigableMap<ByteBuffer, Record> memoryStorage;
+    public final NavigableMap<ByteBuffer, Record> storageToFlush;
+    public final NavigableMap<ByteBuffer, Record> memoryStorage;
 
-    final List<SSTable> tables;
+    public final List<SSTable> tables;
 
     private Storage(NavigableMap<ByteBuffer, Record> memoryStorage,
-                   NavigableMap<ByteBuffer, Record> storageToFlush,
-                   List<SSTable> tables) {
+                    NavigableMap<ByteBuffer, Record> storageToFlush,
+                    List<SSTable> tables) {
         this.memoryStorage = memoryStorage;
         this.storageToFlush = storageToFlush;
         this.tables = tables;
