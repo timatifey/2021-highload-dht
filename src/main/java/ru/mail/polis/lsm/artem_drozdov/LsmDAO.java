@@ -28,7 +28,7 @@ public class LsmDAO implements DAO {
 
     private static final Logger LOG = LoggerFactory.getLogger(LsmDAO.class);
 
-    // private final AwaitingExecutorService compactService = new AwaitingExecutorService();
+    //private final AwaitingExecutorService compactService = new AwaitingExecutorService();
     private final AwaitingExecutorService flushService = new AwaitingExecutorService();
 
     private volatile Storage storage;
@@ -45,12 +45,12 @@ public class LsmDAO implements DAO {
 
     @Override
     public Iterator<Record> range(@Nullable ByteBuffer fromKey, @Nullable ByteBuffer toKey) {
-        Storage storage = this.storage;
+        Storage currStorage = this.storage;
 
-        Iterator<Record> sstableRanges = sstableRanges(storage, fromKey, toKey);
+        Iterator<Record> sstableRanges = sstableRanges(currStorage, fromKey, toKey);
 
-        Iterator<Record> memoryIterator = map(storage.memoryStorage, fromKey, toKey).values().iterator();
-        Iterator<Record> flushMemoryIterator = map(storage.storageToFlush, fromKey, toKey).values().iterator();
+        Iterator<Record> memoryIterator = map(currStorage.memoryStorage, fromKey, toKey).values().iterator();
+        Iterator<Record> flushMemoryIterator = map(currStorage.storageToFlush, fromKey, toKey).values().iterator();
         Iterator<Record> memoryRange = mergeTwo(memoryIterator, flushMemoryIterator);
 
         Iterator<Record> iterator = mergeTwo(sstableRanges, memoryRange);
@@ -80,8 +80,8 @@ public class LsmDAO implements DAO {
         synchronized (this) {
             LOG.info("Await flush task completing");
             flushService.awaitTaskComplete();
-            // compactService.awaitTaskComplete();
-            // compactService.execute(this::performCompact);
+            //compactService.awaitTaskComplete();
+            //compactService.execute(this::performCompact);
             performCompact();
         }
     }
@@ -98,8 +98,8 @@ public class LsmDAO implements DAO {
             flushService.awaitTaskComplete();
             flushService.shutdown();
 
-            // compactService.awaitTaskComplete();
-            // compactService.shutdown();
+            //compactService.awaitTaskComplete();
+            //compactService.shutdown();
 
             storage = storage.prepareBeforeFlush();
             flush(storage);
@@ -119,10 +119,10 @@ public class LsmDAO implements DAO {
                 SSTable flushedTable = flush(storage);
                 storage = storage.afterFlush(flushedTable);
                 LOG.info("Flush ended");
-                // if (needCompact()) {
-                //      compactService.awaitTaskComplete();
-                //      compactService.execute(this::performCompact);
-                // }
+                //if (needCompact()) {
+                //compactService.awaitTaskComplete();
+                //compactService.execute(this::performCompact);
+                //}
             } catch (IOException e) {
                 LOG.error("Fail to flush", e);
             }
