@@ -28,8 +28,8 @@ public class LsmDAO implements DAO {
 
     private static final Logger LOG = LoggerFactory.getLogger(LsmDAO.class);
 
+    // private final AwaitingExecutorService compactService = new AwaitingExecutorService();
     private final AwaitingExecutorService flushService = new AwaitingExecutorService();
-//    private final AwaitingExecutorService compactService = new AwaitingExecutorService();
 
     private volatile Storage storage;
 
@@ -80,8 +80,8 @@ public class LsmDAO implements DAO {
         synchronized (this) {
             LOG.info("Await flush task completing");
             flushService.awaitTaskComplete();
-//            compactService.awaitTaskComplete();
-//            compactService.execute(this::performCompact);
+            // compactService.awaitTaskComplete();
+            // compactService.execute(this::performCompact);
             performCompact();
         }
     }
@@ -98,8 +98,8 @@ public class LsmDAO implements DAO {
             flushService.awaitTaskComplete();
             flushService.shutdown();
 
-//            compactService.awaitTaskComplete();
-//            compactService.shutdown();
+            // compactService.awaitTaskComplete();
+            // compactService.shutdown();
 
             storage = storage.prepareBeforeFlush();
             flush(storage);
@@ -119,10 +119,10 @@ public class LsmDAO implements DAO {
                 SSTable flushedTable = flush(storage);
                 storage = storage.afterFlush(flushedTable);
                 LOG.info("Flush ended");
-//                    if (needCompact()) {
-//                        compactService.awaitTaskComplete();
-//                        compactService.execute(this::performCompact);
-//                    }
+                // if (needCompact()) {
+                //      compactService.awaitTaskComplete();
+                //      compactService.execute(this::performCompact);
+                // }
             } catch (IOException e) {
                 LOG.error("Fail to flush", e);
             }
@@ -137,14 +137,10 @@ public class LsmDAO implements DAO {
             }
             LOG.info("Compact started");
             SSTable compactedSSTable;
-            try {
-                compactedSSTable = SSTable.compact(config.dir, sstableRanges(storage, null, null));
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
+            compactedSSTable = SSTable.compact(config.dir, sstableRanges(storage, null, null));
             storage = storage.afterCompaction(compactedSSTable);
             LOG.info("Compact ended");
-        } catch (Exception e) {
+        } catch (IOException e) {
             LOG.error("Can't run compaction", e);
         }
     }

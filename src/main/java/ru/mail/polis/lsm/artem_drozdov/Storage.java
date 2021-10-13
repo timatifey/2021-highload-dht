@@ -42,8 +42,8 @@ public final class Storage {
     }
 
     public Storage afterCompaction(SSTable ssTable) {
-        List<SSTable> tables = Collections.singletonList(ssTable);
-        return new Storage(memoryStorage, EMPTY_STORAGE, tables);
+        List<SSTable> newTables = Collections.singletonList(ssTable);
+        return new Storage(memoryStorage, EMPTY_STORAGE, newTables);
     }
 
     private static NavigableMap<ByteBuffer, Record> newStorage() {
