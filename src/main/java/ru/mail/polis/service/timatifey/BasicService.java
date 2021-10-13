@@ -13,6 +13,7 @@ import ru.mail.polis.lsm.Record;
 import ru.mail.polis.service.Service;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
@@ -86,14 +87,22 @@ public class BasicService extends HttpServer implements Service {
     private Response put(final String id, byte[] body) {
         final ByteBuffer key = ByteBuffer.wrap(id.getBytes(UTF_8));
         final ByteBuffer value = ByteBuffer.wrap(body);
-        dao.upsert(Record.of(key, value));
-        return new Response(Response.CREATED, Response.EMPTY);
+        try {
+            dao.upsert(Record.of(key, value));
+            return new Response(Response.CREATED, Response.EMPTY);
+        } catch (UncheckedIOException e) {
+            return new Response(Response.SERVICE_UNAVAILABLE, Response.EMPTY);
+        }
     }
 
     private Response delete(final String id) {
         final ByteBuffer key = ByteBuffer.wrap(id.getBytes(UTF_8));
-        dao.upsert(Record.tombstone(key));
-        return new Response(Response.ACCEPTED, Response.EMPTY);
+        try {
+            dao.upsert(Record.tombstone(key));
+            return new Response(Response.ACCEPTED, Response.EMPTY);
+        } catch (UncheckedIOException e) {
+            return new Response(Response.SERVICE_UNAVAILABLE, Response.EMPTY);
+        }
     }
 
     private static byte[] extractBytes(final ByteBuffer byteBuffer) {

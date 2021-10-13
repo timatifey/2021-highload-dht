@@ -16,12 +16,12 @@ public interface DAO extends Closeable {
     /**
      * Update/insert.
      *
-     * @param record new record for updating/inserting
-     * @throws UncheckedIOException can throw UncheckedIOException
+     * @param record record for updating/inserting/deleting
+     * @throws UncheckedIOException throws if DAO closed
      */
     void upsert(Record record);
 
-    void closeAndCompact() throws IOException;
+    void compact();
 
     /**
      * Appends {@code Byte.MIN_VALUE} to {@code buffer}.
