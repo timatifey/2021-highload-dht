@@ -28,6 +28,8 @@ public class SSTable implements Closeable {
     public static final String SSTABLE_FILE_PREFIX = "file_";
     public static final String COMPACTION_FILE_NAME = "compaction";
 
+    public static final int MAX_BUFFER_SIZE = 4096;
+
     private static final Method CLEAN;
 
     static {
