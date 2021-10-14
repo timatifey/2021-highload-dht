@@ -58,12 +58,11 @@ public class LsmDAO implements DAO {
 
     @Override
     public void upsert(Record record) {
-        if (hasClosed.get()) {
-            throw new UncheckedIOException(new IOException("DAO closed"));
-        }
+        checkCloseState();
 
         if (memoryConsumption.addAndGet(sizeOf(record)) > config.memoryLimit) {
             synchronized (this) {
+                checkCloseState();
                 if (memoryConsumption.get() > config.memoryLimit) {
                     executeFlush(sizeOf(record));
                 } else {
@@ -71,7 +70,15 @@ public class LsmDAO implements DAO {
                 }
             }
         }
+
+        checkCloseState();
         storage.memoryStorage.put(record.getKey(), record);
+    }
+
+    private void checkCloseState() {
+        if (hasClosed.get()) {
+            throw new UncheckedIOException(new IOException("DAO closed"));
+        }
     }
 
     @Override
@@ -89,16 +96,14 @@ public class LsmDAO implements DAO {
 
     @Override
     public void close() throws IOException {
-        synchronized (hasClosed) {
-            hasClosed.set(true);
+        hasClosed.set(true);
 
-            flushService.awaitTaskComplete();
-            flushService.shutdown();
+        flushService.awaitTaskComplete();
+        flushService.shutdown();
 
-            storage = storage.prepareBeforeFlush();
-            flush(storage);
-            storage = null;
-        }
+        storage = storage.prepareBeforeFlush();
+        flush(storage);
+        storage = null;
     }
 
     @GuardedBy("this")
