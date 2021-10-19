@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -56,6 +58,7 @@ public class BasicService extends HttpServer implements Service {
             final Request request,
             @Param(value = "id", required = true) final String id
     ) {
+        new ThreadPoolExecutor(1, 1, 1, TimeUnit.MILLISECONDS, )
         if (id.isBlank()) {
             return new Response(Response.BAD_REQUEST, "Bad id".getBytes(UTF_8));
         }
