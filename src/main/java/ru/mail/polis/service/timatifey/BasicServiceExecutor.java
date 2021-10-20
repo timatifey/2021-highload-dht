@@ -52,13 +52,13 @@ public final class BasicServiceExecutor {
     public void shutdown() {
         executor.shutdown();
         try {
-            if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+            if (!executor.awaitTermination(120, TimeUnit.SECONDS)) {
                 LOG.error("Pool did not terminate");
             }
         } catch (InterruptedException e) {
             executor.shutdownNow();
-            LOG.error("Failed shutdown service", e);
             Thread.currentThread().interrupt();
+            LOG.error("Failed shutdown service", e);
         }
     }
 }
